@@ -6,7 +6,6 @@ import (
 	"time"
 
 	redigoplus "github.com/cheetah-fun-gs/goplus/dao/redigo"
-	"github.com/cheetah-fun-gs/goplus/logger"
 	redigo "github.com/gomodule/redigo/redis"
 )
 
@@ -17,23 +16,16 @@ const (
 
 // DelayTrigger 延迟触发器
 type DelayTrigger struct {
-	pool   *redigo.Pool
-	name   string // 触发器名称
-	logger logger.Logger
+	pool *redigo.Pool
+	name string // 触发器名称
 }
 
 // New 获取一个新的触发器
 func New(pool *redigo.Pool, name string) *DelayTrigger {
 	return &DelayTrigger{
-		pool:   pool,
-		name:   name,
-		logger: &logger.DefaultLogger{},
+		pool: pool,
+		name: name,
 	}
-}
-
-// SetLogger 指定日志器
-func (trigger *DelayTrigger) SetLogger(logger logger.Logger) {
-	trigger.logger = logger
 }
 
 // eventID			表示一类事件

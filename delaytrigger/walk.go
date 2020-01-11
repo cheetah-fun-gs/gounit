@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	mlogger "github.com/cheetah-fun-gs/goplus/multier/multilogger"
+	"github.com/cheetah-fun-gs/gounit"
 	redigo "github.com/gomodule/redigo/redis"
 )
 
@@ -36,7 +38,7 @@ func (trigger *DelayTrigger) WalkByParam(walkID string, param *Param, handle Wal
 		for {
 			// 判断是否退出
 			if stop() {
-				trigger.logger.Info("delaytrigger %v walk %v stop", trigger.name, walkID)
+				mlogger.InfoN(gounit.MLoggerName, "delaytrigger %v walk %v stop", trigger.name, walkID)
 				return nil
 			}
 
@@ -49,13 +51,13 @@ func (trigger *DelayTrigger) WalkByParam(walkID string, param *Param, handle Wal
 
 			// 没有新对象 事件处理完毕
 			if err == redigo.ErrNil {
-				trigger.logger.Info("delaytrigger %v walk %v event %v finish", trigger.name, walkID, event.ID)
+				mlogger.InfoN(gounit.MLoggerName, "delaytrigger %v walk %v event %v finish", trigger.name, walkID, event.ID)
 				if !event.IsKeep {
 					err = trigger.EventUnregister(event.ID)
 					if err != nil {
-						trigger.logger.Warn("delaytrigger %v walk %v event %v Unregister err: %v", trigger.name, walkID, event.ID, err)
+						mlogger.WarnN(gounit.MLoggerName, "delaytrigger %v walk %v event %v Unregister err: %v", trigger.name, walkID, event.ID, err)
 					} else {
-						trigger.logger.Info("delaytrigger %v walk %v event %v Unregister success", trigger.name, walkID, event.ID)
+						mlogger.InfoN(gounit.MLoggerName, "delaytrigger %v walk %v event %v Unregister success", trigger.name, walkID, event.ID)
 					}
 				}
 				break
@@ -64,14 +66,14 @@ func (trigger *DelayTrigger) WalkByParam(walkID string, param *Param, handle Wal
 			// 处理对象
 			err = handle(targetID, event.Data)
 			if err != nil {
-				trigger.logger.Warn("delaytrigger %v walk %v event %v target %v data %v handle err: %v", trigger.name, walkID, event.ID, targetID, event.Data, err)
+				mlogger.WarnN(gounit.MLoggerName, "delaytrigger %v walk %v event %v target %v data %v handle err: %v", trigger.name, walkID, event.ID, targetID, event.Data, err)
 			} else {
-				trigger.logger.Info("delaytrigger %v walk %v event %v target %v data %v handle success", trigger.name, walkID, event.ID, targetID, event.Data)
+				mlogger.InfoN(gounit.MLoggerName, "delaytrigger %v walk %v event %v target %v data %v handle success", trigger.name, walkID, event.ID, targetID, event.Data)
 			}
 		}
 	}
 
-	trigger.logger.Info("delaytrigger %v walk %v finish", trigger.name, walkID)
+	mlogger.InfoN(gounit.MLoggerName, "delaytrigger %v walk %v finish", trigger.name, walkID)
 	return nil
 }
 
